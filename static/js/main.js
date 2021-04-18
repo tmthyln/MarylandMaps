@@ -18,8 +18,7 @@ function clearNode(id) {
             .join('img')
             .classed('grid-image', true)
             .attr('src', (img) => img.src)
-            .attr('height', (img) => "200px")
-            .attr('aspect_ratio', (img) => img.height / img.width);
+            .attr('height', (img) => "200px");
     }
 
     addImages(await getImageRow());

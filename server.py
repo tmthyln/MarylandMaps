@@ -44,7 +44,7 @@ def get_images():
         'images': [
             {
                 'src': f'/random-image?val={random.random()}'
-            } for _ in range(30)
+            } for _ in range(40)
         ]
     })
 
