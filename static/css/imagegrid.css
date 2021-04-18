@@ -1,0 +1,10 @@
+#image-grid {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    width: 100%;
+}
+.grid-image {
+    flex: 1 0 auto;
+    padding: 5px;
+}

@@ -5,30 +5,22 @@ function clearNode(id) {
 (async function () {
     'use strict';
 
-    let svg = await createVisualization();
-
-    const testImages = [
-        {
-            href: 'https://digital.lib.umd.edu/binaries/content/gallery/public/maryland-maps/maps/2008/12/md024d.jpg',
-            width: 2178,
-            height: 3086
-        }
-    ];
-
-    async function createVisualization() {
-        return d3.select('#viz')
-            .append('svg');
+    async function getImageRow() {
+        const response = await fetch('/images');
+        const data = await response.json();
+        return data.images;
     }
 
     async function addImages(imageData) {
-        svg.selectAll('image')
-            .enter()
+        d3.select('#image-grid')
+            .selectAll('img')
             .data(imageData)
-            .join('image')
-            .attr('href', (img) => img.href)
-            .attr('width', (img) => img.width)
-            .attr('height', (img) => img.height);
+            .join('img')
+            .classed('grid-image', true)
+            .attr('src', (img) => img.src)
+            .attr('height', (img) => "200px")
+            .attr('aspect_ratio', (img) => img.height / img.width);
     }
 
-    addImages(testImages);
+    addImages(await getImageRow());
 })();

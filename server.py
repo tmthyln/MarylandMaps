@@ -5,7 +5,9 @@ except ImportError:
 
 import argparse
 import flask
+import os
 import psycopg2
+import random
 
 
 def get_argument_parser():
@@ -34,6 +36,31 @@ app = flask.Flask(__name__)
 @app.route('/')
 def main_page():
     return flask.render_template('index.html')
+
+
+@app.route('/images')
+def get_images():
+    return json_response({
+        'images': [
+            {
+                'src': f'/random-image?val={random.random()}'
+            } for _ in range(30)
+        ]
+    })
+
+
+@app.route('/random-image')
+def get_test_image():
+    files = list(filter(lambda f: f.endswith('.jpg'), os.listdir('data-scraper')))
+    filepath = f'data-scraper/{random.choice(files)}'
+    print(filepath)
+    
+    resp = flask.send_file(filepath, mimetype='image/jpeg')
+    resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    resp.headers['Pragma'] = 'no-cache'
+    resp.headers['Expires'] = 0
+    
+    return resp
 
 
 if __name__ == "__main__":
