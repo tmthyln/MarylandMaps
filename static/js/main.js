@@ -18,7 +18,12 @@ function clearNode(id) {
             .join('img')
             .classed('grid-image', true)
             .attr('src', (img) => img.src)
-            .attr('height', (img) => "200px");
+            .attr('height', (img) => "200px")
+            .on('click', selectImage);
+    }
+
+    function selectImage(d) {
+
     }
 
     addImages(await getImageRow());
