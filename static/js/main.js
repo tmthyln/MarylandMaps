@@ -5,6 +5,13 @@ function clearNode(id) {
 (async function () {
     'use strict';
 
+    const filters = {
+        location: new Set(),
+        year: new Set(),
+        mapType: new Set(),
+        interactivity: new Set(),
+    };
+
     async function getImageRow() {
         const response = await fetch('/images');
         const data = await response.json();
@@ -26,5 +33,15 @@ function clearNode(id) {
 
     }
 
-    addImages(await getImageRow());
+    await addImages(await getImageRow());
+
+    new Vue({
+        el: '#app',
+        data: function () {
+            return {
+                filters: filters,
+                searchParameters: ''
+            };
+        },
+    });
 })();

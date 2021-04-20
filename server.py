@@ -53,7 +53,6 @@ def get_images():
 def get_test_image():
     files = list(filter(lambda f: f.endswith('.jpg'), os.listdir('data-scraper')))
     filepath = f'data-scraper/{random.choice(files)}'
-    print(filepath)
     
     resp = flask.send_file(filepath, mimetype='image/jpeg')
     resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
