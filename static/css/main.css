@@ -12,6 +12,11 @@ h1 {
     font-weight: bolder;
 }
 
+h4 {
+    font-size:medium;
+    font-weight:normal;
+}
+
 /* layout of sections */
 .header {
     position: sticky;

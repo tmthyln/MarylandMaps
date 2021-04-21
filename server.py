@@ -37,7 +37,7 @@ app = flask.Flask(__name__)
 
 @app.route('/')
 def main_page():
-    return flask.render_template('index.html')
+    return flask.render_template('details.html')
 
 @app.route('/imagesArgs')
 def images_with_filters():
@@ -71,6 +71,16 @@ def get_test_image():
     resp.headers['Pragma'] = 'no-cache'
     resp.headers['Expires'] = 0
     
+    return resp
+
+@app.route('/details')
+def get_details_map():
+    title = request.args.get("title")
+    # data = dataset.get_details_from_title(title)
+    data="0"
+    resp = Response(response=json.dumps(data), status=200, mimetype='application/json')
+    h = resp.headers
+    h['Access-Control-Allow-Origin'] = "*"
     return resp
 
 
