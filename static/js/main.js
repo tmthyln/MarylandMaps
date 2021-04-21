@@ -17,6 +17,14 @@ function clearNode(id) {
         const data = await response.json();
         return data.images;
     }
+    
+    async function getImageRowFiltered() {
+        
+        //TODO expects args 'type' (comma sep. string) 'location' (not sure) 'min_year' and 'max_year'(ints)
+        const response = await fetch('/imagesArgs');
+        const data = await response.json();
+        return data.images;
+    }
 
     async function addImages(imageData) {
         d3.select('#image-grid')
@@ -28,7 +36,7 @@ function clearNode(id) {
             .attr('height', (img) => "200px")
             .on('click', selectImage);
     }
-
+    
     function selectImage(d) {
 
     }

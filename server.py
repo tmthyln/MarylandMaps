@@ -8,7 +8,9 @@ import flask
 import os
 import psycopg2
 import random
+import pandas as pd
 
+df = pd.read_csv('data-scraper/maps-augmented1.1.csv')
 
 def get_argument_parser():
     parser = argparse.ArgumentParser(description='Visualize the Maryland Maps dataset.')
@@ -37,6 +39,16 @@ app = flask.Flask(__name__)
 def main_page():
     return flask.render_template('index.html')
 
+@app.route('/imagesArgs')
+def images_with_filters():
+    types = request.args.get('type')
+    locations = request.args.get('location')
+    min_year = int(request.args.get('min_year'))
+    max_year = int(request.args.get('max_year'))
+    filtered_files = list(df[df.date_filter >= min_year and 
+                             df.date_filter <= max_year and 
+                             df.type_filter in types]['Digital_Image'])
+    
 
 @app.route('/images')
 def get_images():
