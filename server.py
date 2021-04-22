@@ -38,17 +38,20 @@ app = flask.Flask(__name__)
 
 @app.route('/')
 def main_page():
-    return flask.render_template('details.html', title="ba-057")
+    return flask.render_template('index.html')
+
 
 @app.route('/detailpage')
 def go_to_detail_page():
     title = flask.request.args.get('title')
     return flask.render_template('details.html', title=title)
 
+
 @app.route('/homepage')
 def go_to_homepage():
     print("called homepage")
-    return flask.render_template('index.html')
+    return flask.render_template('details.html', title="ba-057")
+
 
 @app.route('/imagesArgs')
 def images_with_filters():
@@ -56,8 +59,8 @@ def images_with_filters():
     locations = flask.request.args.get('location')
     min_year = int(flask.request.args.get('min_year'))
     max_year = int(flask.request.args.get('max_year'))
-    filtered_files = list(df[df.date_filter >= min_year and 
-                             df.date_filter <= max_year and 
+    filtered_files = list(df[df.date_filter >= min_year and
+                             df.date_filter <= max_year and
                              df.type_filter in types]['Digital_Image'])
     
 
@@ -84,6 +87,7 @@ def get_test_image():
     
     return resp
 
+
 @app.route('/details')
 def get_details_map():
     title = flask.request.args.get("title")
@@ -98,9 +102,9 @@ def get_details_map():
     }
     return json_response(data)
 
-@app.route('/detailimage')
-def get_details_image():
-    title = flask.request.args.get("title")
+
+@app.route('/details/<title>')
+def get_details_image(title):
     filepath = f'data-scraper/'+str(title)+".jpg"
     # img = flask.send_file(filepath, mimetype='image/jpeg')
     # img.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
@@ -115,8 +119,6 @@ def get_filter_options():
     years = df['Year(s)'].unique()
     map_types = df['Type of Map'].unique()
     locations = df['Location'].unique()
-    
-    print(years)
     
     return json_response({
         'filters': {
