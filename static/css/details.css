@@ -26,15 +26,16 @@ h1 {
 
 .sidecolumn {
     float: left;
-    width: 275px;
+    width: 100px;
     background-color:rgb(207, 204, 204);
     left: 0;
     overflow-x: hidden;
 }
 
 .maincolumn {
-    float: left;
-    margin-left: 275px;
+    /* float: left; */
+position: fixed;
+    margin-left: 100px;
     background-color: white;
 }
 

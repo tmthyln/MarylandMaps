@@ -91,10 +91,10 @@ def get_details_map():
     data={"name": "A Horse Map of Maryland, Showing all Phases of Horse Activity",
     "location":"Maryland",
     "type":"Thematic Map",
-    "year":"1941", 
+    "year":"1941",
     "call":"MD 024",
     "publisher":"Maryland Horse Breeder's Association",
-    # "image": {"src":f'/detailimage?title={title}'}
+    "image": {"src": "images/random?val=0.6370243755573912"}
     }
     return json_response(data)
 

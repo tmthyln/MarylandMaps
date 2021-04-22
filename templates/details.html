@@ -22,7 +22,6 @@
     </div>
 
     <div class="linkbar">
-        <!-- <p>Home</p> -->
         <div id="homepage"> </div>
     </div>
     <div class="detailcontent">
@@ -52,23 +51,11 @@
                 <div class="specifics" id="type"></div>
             </div>
         </div>
-        <div class="maincolumn">
-            <div id="specific_image">
-                <input type="file" onchange="previewHandle(this)" />
-                <img id="preview-img" />
-            </div>            
+        <div class="maincolumn" id="specific_image">
         </div>
     </div>
 <script>
-// var thisURL = document.URL;      
-// var getval =thisURL.split('?')[1];    
-// var title_val= getval.split("=")[1];  
-// let title_val="ba-057";
 let title_val='{{ title|tojson }}'
-
-// let a = localStorage.getItem("data-scraper/"+title_val);
-// alert(a);
-// document.getElementById("image").appendChild(elem);
 
 function createButton(){
     d3.select("#homepage")
@@ -77,10 +64,7 @@ function createButton(){
       .join("button")
       .text(d => d)
       .on("click", (e, attributeName) => {
-        // currentAttribute = attributeName;
-        // alert(currentAttribute);
         window.open("http://127.0.0.1:8080/homepage");
-        // urlbt.search = new URLSearchParams().toString();
         fetch(urlbt);
       });
 }
@@ -109,37 +93,11 @@ let urla = new URL("http://127.0.0.1:8080/details");
     document.getElementById("publisher").innerHTML = publisher_val;
     document.getElementById("type").innerHTML = type_val;
 
-    // var elem = document.createElement("img");
-    // elem.setAttribute("src", data.image.src);
-    // elem.setAttribute("height", "480");
-    // elem.setAttribute("width", "520");
-    // document.getElementById("image").appendChild(elem);
-
-    // let urla_image = new URL("http://127.0.0.1:8080/detailimage");
-    // urla_image.search = new URLSearchParams({"title":title_val}).toString();
-    // fetch(urla_image)
-    // .then(response => response.json())
-    // .then(fetchedData => {
-    //     d3.select("#attributes")
-    //         .selectAll("img")
-    //         .data(fetchedData)
-    //         .join('img')
-    //         .classed('grid-image', true)
-    //         .attr('src', (img) => img.src)
-    //         .attr('height', (img) => "480")
-    //         .on("click", clickImage);
-
-        // var elem = document.createElement("img");
-        // elem.setAttribute("src", fetchedData.src);
-        // elem.setAttribute("height", "480");
-        // elem.setAttribute("width", "560");
-        // document.getElementById("specific_image").appendChild(elem);
-    // }).catch(function(err) {alert(err)});
-    
-    // var imageNode = document.getElementById("specific_image");
-    // imageNode.setAttribute
-    // myNode.ATTRIBUTE_NODE.
-    
+    var elem = document.createElement("img");
+    elem.setAttribute("src", data.image.src);
+    elem.setAttribute("height", "480");
+    elem.setAttribute("width", "520");
+    document.getElementById("specific_image").appendChild(elem);
 
   }).catch(function(err) {alert(err)});
 
