@@ -11,6 +11,7 @@
     padding-top: 1em;
     padding-bottom: 1em;
 }
+
 h1 {
     font-weight: bolder;
     font-size: x-large;
@@ -22,19 +23,20 @@ h1 {
 .detailcontent {
     margin-left: 0ex;
     padding: 0;
+    background-color:white;
 }
 
 .sidecolumn {
     float: left;
     width: 100px;
-    background-color:rgb(207, 204, 204);
+    background-color:white;
     left: 0;
     overflow-x: hidden;
 }
 
 .maincolumn {
     /* float: left; */
-position: fixed;
+    position: fixed;
     margin-left: 100px;
     background-color: white;
 }
