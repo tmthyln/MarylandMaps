@@ -97,9 +97,9 @@ function clearNode(id) {
             .attr('height', (img) => "200px")
             .on('click', (e, title) => {
               alert("on click");
-              // var url = "http://127.0.0.1/8080/details.html?title="+title;
-              var url = "http://127.0.0.1:8080/details.html?title="+"ba-057";
-              // window.location.href = url;
+
+              var url = "http://127.0.0.1/8080/details.html?title="+title;
+              var url = "http://127.0.0.1:8080/detailpage?title="+"ba-057";
               window.open(url);
             });
     }

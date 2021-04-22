@@ -38,7 +38,17 @@ app = flask.Flask(__name__)
 
 @app.route('/')
 def main_page():
-    return flask.render_template('details.html')
+    return flask.render_template('details.html', title="ba-057")
+
+@app.route('/detailpage')
+def go_to_detail_page():
+    title = flask.request.args.get('title')
+    return flask.render_template('details.html', title=title)
+
+@app.route('/homepage')
+def go_to_homepage():
+    print("called homepage")
+    return flask.render_template('index.html')
 
 @app.route('/imagesArgs')
 def images_with_filters():
@@ -91,11 +101,11 @@ def get_details_map():
 def get_details_image():
     title = flask.request.args.get("title")
     filepath = f'data-scraper/'+str(title)+".jpg"
-    img = flask.send_file(filepath, mimetype='image/jpeg')
-    img.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-    img.headers['Pragma'] = 'no-cache'
-    img.headers['Expires'] = 0
-    return img
+    # img = flask.send_file(filepath, mimetype='image/jpeg')
+    # img.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    # img.headers['Pragma'] = 'no-cache'
+    # img.headers['Expires'] = 0
+    return json_response({"src": filepath})
 
 
 @app.route('/filters')
