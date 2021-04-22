@@ -9,7 +9,6 @@ import os
 import pandas as pd
 import psycopg2
 import random
-import pandas as pd
 
 df = pd.read_csv('data-scraper/maps_augmented1.1.csv')
 
