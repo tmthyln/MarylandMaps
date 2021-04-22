@@ -69,8 +69,6 @@ function createButton(){
       });
 }
 
-function clickImage(d) {}
-
 let urla = new URL("http://127.0.0.1:8080/details");
   urla.search = new URLSearchParams({"title":title_val}).toString();
   fetch(urla)
