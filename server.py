@@ -38,14 +38,14 @@ app = flask.Flask(__name__)
 
 @app.route('/')
 def main_page():
-    return flask.render_template('index.html')
+    return flask.render_template('details.html')
 
 @app.route('/imagesArgs')
 def images_with_filters():
-    types = request.args.get('type')
-    locations = request.args.get('location')
-    min_year = int(request.args.get('min_year'))
-    max_year = int(request.args.get('max_year'))
+    types = flask.request.args.get('type')
+    locations = flask.request.args.get('location')
+    min_year = int(flask.request.args.get('min_year'))
+    max_year = int(flask.request.args.get('max_year'))
     filtered_files = list(df[df.date_filter >= min_year and 
                              df.date_filter <= max_year and 
                              df.type_filter in types]['Digital_Image'])

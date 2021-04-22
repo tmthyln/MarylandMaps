@@ -2,7 +2,7 @@
 <meta charset="utf-8"/>
 
 <head>
-    <title>Maryland Maps Dashboard</title>
+    <title>Details of One Specific Map</title>
 
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="https://unpkg.com/d3-simple-slider"></script>
@@ -14,47 +14,45 @@
     />
     <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
 
-    <link rel="stylesheet" href="/static/css/main.css" />
-    <!-- <link rel="stylesheet" href="/static/css/imagegrid.css" /> -->
+    <link rel="stylesheet" href="/static/css/details.css" />
 </head>
 
 <body>
-<div class="container">
     <div class="header">
         <h1>Maryland Maps</h1>
     </div>
-    <div class="main">
-        <div class="sidebar">
+
+    <div class="detailcontent">
+        <div class="sidecolumn">
             <div class="attribute">
-                <h4>Location</h4>
+                <div class="parametername">Location</div>
                 <div class="specifics" id="location"></div>
             </div>
             <div class="attribute">
-                <h4>Year</h4>
+                <div class="parametername">Year</div>
                 <div class="specifics" id="year"></div>
             </div>
             <div class="attribute">
-                <h4>Call Number</h4>
+                <div class="parametername">Call Number</div>
                 <div class="specifics" id="call_number"></div>
             </div>
             <div class="attribute">
-                <h4>Publisher/Printer</h4>
+                <div class="parametername">Publisher/Printer</div>
                 <div class="specifics" id="publisher"></div>
             </div>
             <div class="attribute">
-                <h4>Type of the map</h4>
+                <div class="parametername">Type of the map</div>
                 <div class="specifics" id="type"></div>
             </div>
-            
         </div>
-        <div id="image"></div>
+        <div class="maincolumn" id="image">            
+        </div>
     </div>
-</div>
 
 <script>
-var thisURL = document.URL;      
-var getval =thisURL.split('?')[1];    
-var title_val= getval.split("=")[1];  
+// var thisURL = document.URL;      
+// var getval =thisURL.split('?')[1];    
+// var title_val= getval.split("=")[1];  
 let title_val="ba-057";
 
 // let a = localStorage.getItem("data-scraper/"+title_val);
@@ -85,17 +83,17 @@ let urla = new URL("http://127.0.0.1:8080/details");
     // elem.setAttribute("width", "520");
     // document.getElementById("image").appendChild(elem);
 
-    let urla_image = new URL("http://127.0.0.1:8080/detailimage");
-    urla_image.search = new URLSearchParams({"title":title_val}).toString();
-    fetch(urla_image)
-    .then(response => response.json())
-    .then(fetchedData => {
-        var elem = document.createElement("img");
-        elem.setAttribute("src", fetchedData.src);
-        elem.setAttribute("height", "768");
-        elem.setAttribute("width", "1024");
-        document.getElementById("image").appendChild(elem);
-    }).catch(function(err) {alert(err)});
+    // let urla_image = new URL("http://127.0.0.1:8080/detailimage");
+    // urla_image.search = new URLSearchParams({"title":title_val}).toString();
+    // fetch(urla_image)
+    // .then(response => response.json())
+    // .then(fetchedData => {
+    //     var elem = document.createElement("img");
+    //     elem.setAttribute("src", fetchedData.src);
+    //     elem.setAttribute("height", "768");
+    //     elem.setAttribute("width", "1024");
+    //     document.getElementById("image").appendChild(elem);
+    // }).catch(function(err) {alert(err)});
 
   }).catch(function(err) {alert(err)});
 

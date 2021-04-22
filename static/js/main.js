@@ -95,11 +95,16 @@ function clearNode(id) {
             .classed('grid-image', true)
             .attr('src', (img) => img.src)
             .attr('height', (img) => "200px")
-            .on('click', selectImage);
+            .on('click', (e, title) => {
+              // var url = "http://127.0.0.1/8080/details.html?title="+title;
+              var url = "http://127.0.0.1:8080/details.html?title="+"ba-057";
+              // window.location.href = url;
+              window.open(url);
+            });
     }
     
     function selectImage(d) {
-      window.location.href = "http://127.0.0.1:8080/details.html";
+      
     }
 
     await addImages(await getImageRow());
