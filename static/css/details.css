@@ -1,9 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&display=swap');
 
-:root {
-    --sidebar-width: 275px;
-}
-
 * {
     font-family: 'Open Sans', sans-serif;
 }
@@ -31,7 +27,7 @@ h1 {
 
 .sidecolumn {
     float: left;
-    width: var(--sidebar-width);
+    width: 275px;
     height: 300px;
     background-color:rgb(207, 204, 204);
     /* position: fixed; */
@@ -41,7 +37,7 @@ h1 {
 
 .maincolumn {
     /* float: left; */
-    margin-left: var(--sidebar-width);
+    margin-left: 275px;
     height: 300px;
     background-color: white;
     /* position: fixed; */
@@ -54,9 +50,11 @@ h1 {
 .specifics {
     font-size: small;
     color: black;
+    background-color: white;
 }
 
 .parametername{
     font-size: medium;
     color:blue;
+    background-color: white;
 }

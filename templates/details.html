@@ -12,7 +12,6 @@
             integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
             crossorigin="anonymous"
     />
-    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
 
     <link rel="stylesheet" href="/static/css/details.css" />
 </head>
@@ -45,7 +44,7 @@
                 <div class="specifics" id="type"></div>
             </div>
         </div>
-        <div class="maincolumn" id="image">            
+        <div class="maincolumn" id="specific_image">            
         </div>
     </div>
 
@@ -83,17 +82,31 @@ let urla = new URL("http://127.0.0.1:8080/details");
     // elem.setAttribute("width", "520");
     // document.getElementById("image").appendChild(elem);
 
-    // let urla_image = new URL("http://127.0.0.1:8080/detailimage");
-    // urla_image.search = new URLSearchParams({"title":title_val}).toString();
-    // fetch(urla_image)
-    // .then(response => response.json())
-    // .then(fetchedData => {
-    //     var elem = document.createElement("img");
-    //     elem.setAttribute("src", fetchedData.src);
-    //     elem.setAttribute("height", "768");
-    //     elem.setAttribute("width", "1024");
-    //     document.getElementById("image").appendChild(elem);
-    // }).catch(function(err) {alert(err)});
+    let urla_image = new URL("http://127.0.0.1:8080/detailimage");
+    urla_image.search = new URLSearchParams({"title":title_val}).toString();
+    fetch(urla_image)
+    .then(response => response.json())
+    .then(fetchedData => {
+        d3.select("#attributes")
+            .selectAll("img")
+            .data(fetchedData)
+            .join('img')
+            .classed('grid-image', true)
+            .attr('src', (img) => img.src)
+            .attr('height', (img) => "480")
+            .on("click", d);
+
+        // var elem = document.createElement("img");
+        // elem.setAttribute("src", fetchedData.src);
+        // elem.setAttribute("height", "480");
+        // elem.setAttribute("width", "560");
+        // document.getElementById("specific_image").appendChild(elem);
+    }).catch(function(err) {alert(err)});
+    
+    // var imageNode = document.getElementById("specific_image");
+    // imageNode.setAttribute
+    // myNode.ATTRIBUTE_NODE.
+    
 
   }).catch(function(err) {alert(err)});
 
