@@ -1,14 +1,11 @@
-function clearNode(id) {
-    document.getElementById(id).innerText = '';
-}
-
 (async function () {
     'use strict';
 
     const filters = {
         location: new Set(),
         year: new Set(),
-        mapType: new Set()
+        mapType: new Set(),
+        searchParameter: '',
     };
 
     Vue.component('filters', {
@@ -76,33 +73,38 @@ function clearNode(id) {
         </div>`,
         asyncComputed: {
             async imageData() {
-                const response = await fetch('/images');
+                const response = await fetch('/images', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        filters: {
+                            location: Array.from(filters.location),
+                            minYear: filters.minYear,
+                            maxYear: filters.maxYear,
+                            mapType: Array.from(filters.mapType)
+                        },
+                        searchParameter: filters.searchParameter
+                    })
+                });
                 return (await response.json()).images;
             }
         },
         methods: {
             selectImage(event) {
-                var url = "http://127.0.0.1/8080/details.html?title="+event.target.title;
-                var url = "http://127.0.0.1:8080/detailpage?title="+"ba-057";
+                var url = "/details.html?title="+event.target.title;
+                var url = "/detailpage?title="+"ba-057";
                 window.open(url);
             }
         }
     })
-    
-    async function getImageRowFiltered() {
-        
-        //TODO expects args 'type' (comma sep. string) 'location' (not sure) 'min_year' and 'max_year'(ints)
-        const response = await fetch('/imagesArgs');
-        const data = await response.json();
-        return data.images;
-    }
 
     new Vue({
         el: '#app',
         data: function () {
             return {
                 filters: filters,
-                searchParameters: ''
             };
         },
     });

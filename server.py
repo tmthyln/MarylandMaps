@@ -40,7 +40,6 @@ def main_page():
     return flask.render_template('index.html')
 
 
-
 @app.route('/detailpage')
 def go_to_detail_page():
     title = flask.request.args.get('title')
@@ -53,8 +52,7 @@ def go_to_homepage():
     return flask.render_template('details.html', title="ba-057")
 
 
-
-@app.route('/imagesArgs')
+@app.route('/imagesfiltered')
 def images_with_filters():
     types = flask.request.args.get('type')
     locations = flask.request.args.get('location')
@@ -64,8 +62,10 @@ def images_with_filters():
                              df.type_filter in types]['Digital_Image'])
 
 
-@app.route('/images')
+@app.route('/images', methods=['GET', 'POST'])
 def get_images():
+    data = flask.request.json if flask.request.method == 'POST' else {}
+    
     return json_response({
         'images': [
             {
@@ -75,16 +75,19 @@ def get_images():
     })
 
 
-@app.route('/images/random')
-def get_test_image():
+@app.route('/images/<title>')
+def get_test_image(title):
     files = list(filter(lambda f: f.endswith('.jpg'), os.listdir('data-scraper')))
-    filepath = f'data-scraper/{random.choice(files)}'
-
+    
+    if f'{title}.jpg' in files:
+        filepath = f'data-scraper/{title}.jpg'
+    elif title == 'random':
+        filepath = f'data-scraper/{random.choice(files)}'
+        
     resp = flask.send_file(filepath, mimetype='image/jpeg')
     resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     resp.headers['Pragma'] = 'no-cache'
     resp.headers['Expires'] = 0
-
     return resp
 
 
