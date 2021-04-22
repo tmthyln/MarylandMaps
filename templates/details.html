@@ -25,42 +25,75 @@
     </div>
     <div class="main">
         <div class="sidebar">
-            <h4>Location</h4><p id="location"></p>
-            <h4>Year</h4><p id="year"></p>
-            <h4>Call Number</h4><p id="call_number"></p>
-            <h4>Publisher/Printer</h4><p id="publisher"></p>
-            <h4>Type of the map</h4><p id="type"></p>
+            <div class="attribute">
+                <h4>Location</h4>
+                <div class="specifics" id="location"></div>
+            </div>
+            <div class="attribute">
+                <h4>Year</h4>
+                <div class="specifics" id="year"></div>
+            </div>
+            <div class="attribute">
+                <h4>Call Number</h4>
+                <div class="specifics" id="call_number"></div>
+            </div>
+            <div class="attribute">
+                <h4>Publisher/Printer</h4>
+                <div class="specifics" id="publisher"></div>
+            </div>
+            <div class="attribute">
+                <h4>Type of the map</h4>
+                <div class="specifics" id="type"></div>
+            </div>
+            
         </div>
         <div id="image"></div>
     </div>
 </div>
 
 <script>
-let title=null;
-let location=null;
-let year=null;
-let call_number=null;
-let publisher=null;
-let type=null;
+let title_val="ba-057";
 
-let urla = new URL("http://localhost:8000/details");
-  urla.search = new URLSearchParams({"title":title}).toString();
+// let a = localStorage.getItem("data-scraper/"+title_val);
+// alert(a);
+// document.getElementById("image").appendChild(elem);
+
+let urla = new URL("http://127.0.0.1:8080/details");
+  urla.search = new URLSearchParams({"title":title_val}).toString();
   fetch(urla)
   .then(response => response.json())
   .then(fetchedData => {
     let data = fetchedData;
-    location = data[0][1];
-    year = data[1][1];
-    call_number = data[2][1];
-    publisher = data[3][1];
-    type = data[4][1];
+    let location_val = data.location;
+    let year_val = data.year;
+    let call_number_val = data.call;
+    let publisher_val = data.publisher;
+    let type_val = data.type;
 
-    document.getElementById("location") = "Hello world!";
-    document.getElementById("year") = "Hello world!";
-    document.getElementById("call_number") = "Hello world!";
-    document.getElementById("publisher") = "Hello world!";
-    document.getElementById("type") = "Hello world!";
-    
+    document.getElementById("location").innerHTML = "Hello world!"; //location_val;
+    document.getElementById("year").innerHTML = year_val;
+    document.getElementById("call_number").innerHTML = call_number_val;
+    document.getElementById("publisher").innerHTML = publisher_val;
+    document.getElementById("type").innerHTML = type_val;
+
+    // var elem = document.createElement("img");
+    // elem.setAttribute("src", data.image.src);
+    // elem.setAttribute("height", "480");
+    // elem.setAttribute("width", "520");
+    // document.getElementById("image").appendChild(elem);
+
+    let urla_image = new URL("http://127.0.0.1:8080/detailimage");
+    urla_image.search = new URLSearchParams({"title":title_val}).toString();
+    fetch(urla_image)
+    .then(response => response.json())
+    .then(fetchedData => {
+        var elem = document.createElement("img");
+        elem.setAttribute("src", fetchedData.src);
+        elem.setAttribute("height", "768");
+        elem.setAttribute("width", "1024");
+        document.getElementById("image").appendChild(elem);
+    }).catch(function(err) {alert(err)});
+
   }).catch(function(err) {alert(err)});
 
 </script>

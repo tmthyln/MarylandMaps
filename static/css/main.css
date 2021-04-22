@@ -15,6 +15,8 @@ h1 {
 h4 {
     font-size:medium;
     font-weight:normal;
+    color: darkblue;
+    background-color: darkgray;
 }
 
 /* layout of sections */
@@ -46,4 +48,16 @@ h4 {
     left: 0;
     overflow-x: hidden;
     padding: 20px;
+}
+
+.specifics {
+    font-size: small;
+    color: black;
+    background-color: cadetblue;
+}
+
+.attribute{
+    font-size: small;
+    background-color: darkgray;
+    height: 2em;
 }

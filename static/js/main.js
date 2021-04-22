@@ -38,7 +38,7 @@ function clearNode(id) {
     }
     
     function selectImage(d) {
-
+        alert(d);
     }
 
     await addImages(await getImageRow());

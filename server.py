@@ -10,7 +10,7 @@ import psycopg2
 import random
 import pandas as pd
 
-df = pd.read_csv('data-scraper/maps-augmented1.1.csv')
+df = pd.read_csv('data-scraper/maps_augmented1.1.csv')
 
 def get_argument_parser():
     parser = argparse.ArgumentParser(description='Visualize the Maryland Maps dataset.')
@@ -75,13 +75,26 @@ def get_test_image():
 
 @app.route('/details')
 def get_details_map():
-    title = request.args.get("title")
-    # data = dataset.get_details_from_title(title)
-    data="0"
-    resp = Response(response=json.dumps(data), status=200, mimetype='application/json')
-    h = resp.headers
-    h['Access-Control-Allow-Origin'] = "*"
-    return resp
+    title = flask.request.args.get("title")
+
+    data={"location":"here", 
+    "type":"no", 
+    "year":"2021", 
+    "call":"123", 
+    "publisher":"me",
+    # "image": {"src":f'/detailimage?title={title}'}
+    }
+    return json_response(data)
+
+@app.route('/detailimage')
+def get_details_image():
+    title = flask.request.args.get("title")
+    filepath = f'data-scraper/'+str(title)+".jpg"
+    img = flask.send_file(filepath, mimetype='image/jpeg')
+    img.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    img.headers['Pragma'] = 'no-cache'
+    img.headers['Expires'] = 0
+    return img
 
 
 if __name__ == "__main__":
