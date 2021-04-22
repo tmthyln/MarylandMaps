@@ -13,7 +13,7 @@ function clearNode(id) {
 
     Vue.component('filters', {
         template: `
-          <sidebar class="accordion" role="tablist">
+          <sidebar class="accordion" role="tablist" v-if="filterOptions !== null">
             <b-card no-body class="mb-1">
               <b-card-header header-tag="header" class="p-1" role="tab">
                 <b-button block v-b-toggle.accordion-1 variant="primary">Location</b-button>
@@ -56,28 +56,38 @@ function clearNode(id) {
               </b-collapse>
             </b-card>
           </sidebar>`,
-        data() {
-            return {
-                loaded: false
-            };
-        },
         asyncComputed: {
             async filterOptions() {
-                return fetch('/filters')
-                    .then(response => response.json())
-                    .then(data => {
-                        this.filterOptions = data.filters;
-                        this.loaded = true;
-                    });
+                const response = await fetch('/filters');
+                const data = await response.json();
+                return data.filters;
             }
         },
     })
 
-    async function getImageRow() {
-        const response = await fetch('/images');
-        const data = await response.json();
-        return data.images;
-    }
+    Vue.component('image-grid', {
+        template: `
+        <div id="image-grid">
+            <img v-for="image in imageData"
+                class="grid-image"
+                v-bind:src="image.src"
+                height="200px"
+                @click="selectImage" />
+        </div>`,
+        asyncComputed: {
+            async imageData() {
+                const response = await fetch('/images');
+                return (await response.json()).images;
+            }
+        },
+        methods: {
+            selectImage(event) {
+                var url = "http://127.0.0.1/8080/details.html?title="+event.target.title;
+                var url = "http://127.0.0.1:8080/detailpage?title="+"ba-057";
+                window.open(url);
+            }
+        }
+    })
     
     async function getImageRowFiltered() {
         
@@ -86,29 +96,6 @@ function clearNode(id) {
         const data = await response.json();
         return data.images;
     }
-
-    async function addImages(imageData) {
-        d3.select('#image-grid')
-            .selectAll('img')
-            .data(imageData)
-            .join('img')
-            .classed('grid-image', true)
-            .attr('src', (img) => img.src)
-            .attr('height', (img) => "200px")
-            .on('click', (e, title) => {
-              alert("on click");
-
-              var url = "http://127.0.0.1/8080/details.html?title="+title;
-              var url = "http://127.0.0.1:8080/detailpage?title="+"ba-057";
-              window.open(url);
-            });
-    }
-    
-    function selectImage(d) {
-      
-    }
-
-    await addImages(await getImageRow());
 
     new Vue({
         el: '#app',
