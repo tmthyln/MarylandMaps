@@ -28,6 +28,10 @@
     <div class="detailcontent">
         <div class="sidecolumn">
             <div class="attribute">
+                <div class="parametername">Title</div>
+                <div class="specifics" id="name"></div>
+            </div>
+            <div class="attribute">
                 <div class="parametername">Location</div>
                 <div class="specifics" id="location"></div>
             </div>
@@ -94,10 +98,12 @@ let urla = new URL("http://127.0.0.1:8080/details");
     let call_number_val = data.call;
     let publisher_val = data.publisher;
     let type_val = data.type;
+    let name_val=data.name;
 
     createButton();
 
-    document.getElementById("location").innerHTML = "Hello world!"; //location_val;
+    document.getElementById("name").innerHTML = name_val;
+    document.getElementById("location").innerHTML = location_val;
     document.getElementById("year").innerHTML = year_val;
     document.getElementById("call_number").innerHTML = call_number_val;
     document.getElementById("publisher").innerHTML = publisher_val;

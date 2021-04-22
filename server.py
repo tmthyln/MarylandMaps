@@ -88,11 +88,12 @@ def get_test_image():
 def get_details_map():
     title = flask.request.args.get("title")
 
-    data={"location":"here", 
-    "type":"no", 
-    "year":"2021", 
-    "call":"123", 
-    "publisher":"me",
+    data={"name": "A Horse Map of Maryland, Showing all Phases of Horse Activity",
+    "location":"Maryland",
+    "type":"Thematic Map",
+    "year":"1941", 
+    "call":"MD 024",
+    "publisher":"Maryland Horse Breeder's Association",
     # "image": {"src":f'/detailimage?title={title}'}
     }
     return json_response(data)
