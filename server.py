@@ -6,6 +6,7 @@ except ImportError:
 import argparse
 import flask
 import os
+import pandas as pd
 import psycopg2
 import random
 import pandas as pd
@@ -55,13 +56,13 @@ def get_images():
     return json_response({
         'images': [
             {
-                'src': f'/random-image?val={random.random()}'
-            } for _ in range(40)
+                'src': f'/images/random?val={random.random()}'
+            } for _ in range(50)
         ]
     })
 
 
-@app.route('/random-image')
+@app.route('/images/random')
 def get_test_image():
     files = list(filter(lambda f: f.endswith('.jpg'), os.listdir('data-scraper')))
     filepath = f'data-scraper/{random.choice(files)}'
@@ -95,6 +96,24 @@ def get_details_image():
     img.headers['Pragma'] = 'no-cache'
     img.headers['Expires'] = 0
     return img
+
+
+@app.route('/filters')
+def get_filter_options():
+    df = pd.read_csv('data-scraper/maps.csv', dtype=str, na_filter=False)
+    years = df['Year(s)'].unique()
+    map_types = df['Type of Map'].unique()
+    locations = df['Location'].unique()
+    
+    print(years)
+    
+    return json_response({
+        'filters': {
+            'years': list(years),
+            'mapTypes': list(map_types),
+            'locations': list(locations)
+        }
+    })
 
 
 if __name__ == "__main__":
