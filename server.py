@@ -38,7 +38,7 @@ app = flask.Flask(__name__)
 
 @app.route('/')
 def main_page():
-    return flask.render_template('details.html')
+    return flask.render_template('index.html')
 
 @app.route('/imagesArgs')
 def images_with_filters():
