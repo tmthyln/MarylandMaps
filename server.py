@@ -9,7 +9,6 @@ import os
 import pandas as pd
 import psycopg2
 import random
-import pandas as pd
 
 df = pd.read_csv('data-scraper/maps_augmented1.1.csv')
 
@@ -105,9 +104,8 @@ def get_details_map():
 
 @app.route('/filters')
 def get_filter_options():
-    df = pd.read_csv('data-scraper/maps.csv', dtype=str, na_filter=False)
-    years = df['Year(s)'].unique()
-    map_types = df['Type of Map'].unique()
+    years = df['date_filter'].astype('string').unique()
+    map_types = df['type_filter'].unique()
     locations = df['Location'].unique()
 
     print(years)
