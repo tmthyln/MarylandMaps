@@ -66,7 +66,7 @@ def get_images():
     return json_response({
         'images': [
             {
-                'title': 'random',  # TODO need an id to refer to the same image?
+                'title': 'ba-057',  # TODO need an id to refer to the same image?
                 'src': f'/images/random?val={random.random()}'
             } for _ in range(50)
         ]
@@ -92,6 +92,7 @@ def get_test_image(title):
 @app.route('/details/<title>')
 def get_details_map(title):
     # TODO return actual details of the particular image requested
+    
     obj = df[df['Digital Image'] == title]
     print(title)
     data = {"name": str(obj['Title'].values[0]),
@@ -102,7 +103,7 @@ def get_details_map(title):
             "publisher": str(obj['Publisher / Printer'].values[0]),
             "image": {"src": "images/"+ title}
         }
-    return json_response(data)
+    return json_response({})
 
 
 @app.route('/filters')
