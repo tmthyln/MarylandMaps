@@ -8,7 +8,7 @@ import flask
 import os
 import pandas as pd
 import random
-
+import re
 df = pd.read_csv('data-scraper/maps_augmented1.1.csv')
 
 
@@ -43,6 +43,8 @@ def main_page():
 @app.route('/detailpage')
 def go_to_detail_page():
     title = flask.request.args.get('title')
+    title = re.search('/images/(.*)', title)[1]
+    print(title)
     return flask.render_template('details.html', title=title)
 
 
@@ -101,15 +103,16 @@ def get_test_image(title):
 
 @app.route('/details')
 def get_details_map():
-    title = flask.request.args.get("title")
-
-    data = {"name": "A Horse Map of Maryland, Showing all Phases of Horse Activity",
-            "location": "Maryland",
-            "type": "Thematic Map",
-            "year": "1941",
-            "call": "MD 024",
-            "publisher": "Maryland Horse Breeder's Association",
-            "image": {"src": "images/random?val=0.6370243755573912"}
+    title = flask.request.args.get("title")[1:-1]
+    obj = df[df['Digital Image'] == title]
+    print(title)
+    data = {"name": str(obj['Title'].values[0]),
+            "location": str(obj['Location'].values[0]),
+            "type": str(obj['Type of Map'].values[0]),
+            "year": str(obj['Year(s)'].values[0]),
+            "call": str(obj['Call Number'].values[0]),
+            "publisher": str(obj['Publisher / Printer'].values[0]),
+            "image": {"src": "images/"+ title}
             }
     return json_response(data)
 

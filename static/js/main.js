@@ -93,8 +93,9 @@
         },
         methods: {
             selectImage(event) {
+                console.log(event.originalTarget.attributes.src.nodeValue)
                 var url = "/details.html?title="+event.target.title;
-                var url = "/detailpage?title="+"ba-057";
+                var url = "/detailpage?title="+event.originalTarget.attributes.src.nodeValue;
                 window.open(url);
             }
         }
