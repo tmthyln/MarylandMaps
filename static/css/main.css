@@ -53,3 +53,7 @@ label {
     word-wrap: normal;
 }
 
+.range-slider {
+    width: var(--sidebar-width);
+}
+

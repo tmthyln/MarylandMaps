@@ -1,16 +1,17 @@
 (async function () {
     'use strict';
 
-    const filters = {
-        location: new Set(),
-        year: new Set(),
-        mapType: new Set(),
+    const filterSelections = {
+        locations: [],
+        minYear: 0,
+        maxYear: 10000,
+        mapTypes: [],
         searchParameter: '',
     };
 
     Vue.component('filters', {
         template: `
-          <sidebar class="accordion" role="tablist" v-if="filterOptions !== null">
+          <sidebar class="accordion" role="tablist" v-show="filterOptions !== null">
             <b-card no-body class="mb-1">
               <b-card-header header-tag="header" class="p-1" role="tab">
                 <b-button block v-b-toggle.accordion-1 variant="primary">Location</b-button>
@@ -18,8 +19,8 @@
               <b-collapse id="accordion-1" accordion="filter-accordion" role="tabpanel">
                 <b-card-body>
                   <div v-for="option in filterOptions.locations">
-                    <input type="checkbox" v-bind:id="option" v-bind:name="option" v-bind:value="option">
-                    <label v-bind:for="option">{{ option }}</label><br>
+                    <input type="checkbox" :id="option" :name="option" :value="option" @change="toggleLocationSelected(option)">
+                    <label :for="option">{{ option }}</label><br>
                   </div>
                 </b-card-body>
               </b-collapse>
@@ -31,10 +32,7 @@
               </b-card-header>
               <b-collapse id="accordion-2" accordion="filter-accordion" role="tabpanel">
                 <b-card-body>
-                  <div v-for="option in filterOptions.years">
-                    <input type="checkbox" v-bind:id="option" v-bind:name="option" v-bind:value="option">
-                    <label v-bind:for="option">{{ option }}</label><br>
-                  </div>
+                  <div class="range-slider" id="slider-range"></div>
                 </b-card-body>
               </b-collapse>
             </b-card>
@@ -46,8 +44,8 @@
               <b-collapse id="accordion-3" accordion="filter-accordion" role="tabpanel">
                 <b-card-body>
                   <div v-for="option in filterOptions.mapTypes">
-                    <input type="checkbox" v-bind:id="option" v-bind:name="option" v-bind:value="option">
-                    <label v-bind:for="option">{{ option }}</label><br>
+                    <input type="checkbox" :id="option" :name="option" :value="option" @change="toggleMapTypeSelected(option)">
+                    <label :for="option">{{ option }}</label><br>
                   </div>
                 </b-card-body>
               </b-collapse>
@@ -60,6 +58,50 @@
                 return data.filters;
             }
         },
+        updated() {
+            this.createRangeSlider();
+        },
+        methods: {
+            createRangeSlider() {
+                const sliderRange = d3
+                    .sliderBottom()
+                    .min(this.filterOptions.minYear)
+                    .max(this.filterOptions.maxYear)
+                    .tickFormat(String)
+                    .ticks(this.filterOptions.years)
+                    .step(1)
+                    .default([this.filterOptions.minYear, this.filterOptions.maxYear])
+                    .fill('#2196f3')
+                    .on('onchange', val => {
+                        filterSelections.minYear = val[0];
+                        filterSelections.maxYear = val[1];
+                    });
+
+                const gRange = d3
+                    .select('#slider-range')
+                    .append('svg')
+                    .attr('width', 500)
+                    .attr('height', 100)
+                    .append('g')
+                    .attr('transform', 'translate(30,30)');
+
+                gRange.call(sliderRange);
+            },
+            toggleLocationSelected(location) {
+                if (filterSelections.locations.includes(location)) {
+                    filterSelections.locations.splice(filterSelections.locations.indexOf(location), 1);
+                } else {
+                    filterSelections.locations.push(location);
+                }
+            },
+            toggleMapTypeSelected(mapType) {
+                if (filterSelections.mapTypes.includes(mapType)) {
+                    filterSelections.mapTypes.splice(filterSelections.mapTypes.indexOf(mapType), 1);
+                } else {
+                    filterSelections.mapTypes.push(mapType);
+                }
+            }
+        }
     })
 
     Vue.component('image-grid', {
@@ -73,6 +115,7 @@
         </div>`,
         asyncComputed: {
             async imageData() {
+                console.log(filterSelections);
                 const response = await fetch('/images', {
                     method: 'POST',
                     headers: {
@@ -80,12 +123,12 @@
                     },
                     body: JSON.stringify({
                         filters: {
-                            location: Array.from(filters.location),
-                            minYear: filters.minYear,
-                            maxYear: filters.maxYear,
-                            mapType: Array.from(filters.mapType)
+                            location: filterSelections.locations,
+                            minYear: filterSelections.minYear,
+                            maxYear: filterSelections.maxYear,
+                            mapType: filterSelections.mapTypes,
                         },
-                        searchParameter: filters.searchParameter
+                        searchParameter: filterSelections.searchParameter
                     })
                 });
                 return (await response.json()).images;
@@ -93,9 +136,7 @@
         },
         methods: {
             selectImage(event) {
-                var url = "/details.html?title="+event.target.title;
-                var url = "/detailpage?title="+"ba-057";
-                window.open(url);
+                window.open(`/details-page/ba-057`);
             }
         }
     })
@@ -104,7 +145,7 @@
         el: '#app',
         data: function () {
             return {
-                filters: filters,
+                filterSelections: filterSelections,
             };
         },
     });

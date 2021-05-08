@@ -55,7 +55,7 @@
         </div>
     </div>
 <script>
-let title_val='{{ title|tojson }}'
+let title_val= '{{ title }}';
 
 function createButton(){
     d3.select("#homepage")
@@ -64,14 +64,12 @@ function createButton(){
       .join("button")
       .text(d => d)
       .on("click", (e, attributeName) => {
-        window.open("http://127.0.0.1:8080/");
+        window.open("/");
         fetch(urlbt);
       });
 }
 
-let urla = new URL("http://127.0.0.1:8080/details");
-  urla.search = new URLSearchParams({"title":title_val}).toString();
-  fetch(urla)
+fetch(`/details/${title_val}`)
   .then(response => response.json())
   .then(fetchedData => {
     let data = fetchedData;

@@ -40,35 +40,27 @@ def main_page():
     return flask.render_template('index.html')
 
 
-@app.route('/detailpage')
-def go_to_detail_page():
-    title = flask.request.args.get('title')
-    return flask.render_template('details.html', title=title)
-
-
-@app.route('/homepage')
-def go_to_homepage():
-    print("called homepage")
-    return flask.render_template('details.html', title="ba-057")
-
-
-@app.route('/imagesfiltered')
-def images_with_filters():
-    types = flask.request.args.get('type')
-    locations = flask.request.args.get('location')
-    min_year = int(flask.request.args.get('min_year'))
-    max_year = int(flask.request.args.get('max_year'))
-    filtered_files = list(df[min_year <= df.date_filter <= max_year and
-                             df.type_filter in types]['Digital_Image'])
+@app.route('/details-page/<title>')
+def go_to_detail_page(title):
+    return flask.render_template('details.html', title=1234)
 
 
 @app.route('/images', methods=['GET', 'POST'])
 def get_images():
     data = flask.request.json if flask.request.method == 'POST' else {}
     
+    locations = data['filters']['location']
+    min_year = data['filters']['minYear']
+    max_year = data['filters']['maxYear']
+    map_types = data['filters']['mapType']
+    string_query = data['searchParameter']
+    
+    # TODO need to respond with actual filtered images instead of random ones
+    
     return json_response({
         'images': [
             {
+                'title': 'random',  # TODO need an id to refer to the same image?
                 'src': f'/images/random?val={random.random()}'
             } for _ in range(50)
         ]
@@ -91,17 +83,17 @@ def get_test_image(title):
     return resp
 
 
-@app.route('/details')
-def get_details_map():
-    title = flask.request.args.get("title")
-
+@app.route('/details/<title>')
+def get_details_map(title):
+    # TODO return actual details of the particular image requested
+    
     data = {"name": "A Horse Map of Maryland, Showing all Phases of Horse Activity",
             "location": "Maryland",
             "type": "Thematic Map",
             "year": "1941",
             "call": "MD 024",
             "publisher": "Maryland Horse Breeder's Association",
-            "image": {"src": "images/random?val=0.6370243755573912"}
+            "image": {"src": "/images/random?val=0.6370243755573912"}
             }
     return json_response(data)
 
@@ -115,6 +107,8 @@ def get_filter_options():
     return json_response({
         'filters': {
             'years': list(years),
+            'minYear': min(years),
+            'maxYear': max(years),
             'mapTypes': list(map_types),
             'locations': list(locations)
         }
