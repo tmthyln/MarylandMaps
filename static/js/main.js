@@ -80,10 +80,10 @@
                     },
                     body: JSON.stringify({
                         filters: {
-                            location: Array.from(filters.location),
-                            minYear: filters.minYear,
-                            maxYear: filters.maxYear,
-                            mapType: Array.from(filters.mapType)
+                            location: ['Maryland', 'Annapolis'], //Array.from(filters.location),
+                            minYear: 0, //filters.minYear,
+                            maxYear: 2000, //filters.maxYear,
+                            mapType: ['Thematic', 'Historic', 'Other']// Array.from(filters.mapType)
                         },
                         searchParameter: filters.searchParameter
                     })

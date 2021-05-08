@@ -54,10 +54,10 @@ def go_to_homepage():
 
 @app.route('/imagesfiltered')
 def images_with_filters():
-    types = flask.request.args.get('type')
-    locations = flask.request.args.get('location')
-    min_year = int(flask.request.args.get('min_year'))
-    max_year = int(flask.request.args.get('max_year'))
+    
+    #locations = flask.request.args.get('location')
+    #min_year = int(flask.request.args.get('min_year'))
+    #max_year = int(flask.request.args.get('max_year'))
     filtered_files = list(df[min_year <= df.date_filter <= max_year and
                              df.type_filter in types]['Digital_Image'])
 
@@ -65,12 +65,20 @@ def images_with_filters():
 @app.route('/images', methods=['GET', 'POST'])
 def get_images():
     data = flask.request.json if flask.request.method == 'POST' else {}
-    
+    print(data)
+    filters = data['filters']
+    types = filters['mapType']
+    locations =filters['location']
+    min_year = int(filters['minYear'])
+    max_year = int(filters['maxYear'])
+    filtered_files = list(df[(min_year <= df.date_filter) & (df.date_filter <= max_year) &
+                            df.Location.isin(locations) & df.type_filter.isin(types)].copy()['Digital Image'])
     return json_response({
         'images': [
             {
-                'src': f'/images/random?val={random.random()}'
-            } for _ in range(50)
+                
+                'src' : f'/images/%s'%filtered_files[i]
+            } for i in range(0, len(filtered_files))
         ]
     })
 
@@ -79,8 +87,8 @@ def get_images():
 def get_test_image(title):
     files = list(filter(lambda f: f.endswith('.jpg'), os.listdir('data-scraper')))
     
-    if f'{title}.jpg' in files:
-        filepath = f'data-scraper/{title}.jpg'
+    if title in files:
+        filepath = f'data-scraper/{title}'
     elif title == 'random':
         filepath = f'data-scraper/{random.choice(files)}'
         
