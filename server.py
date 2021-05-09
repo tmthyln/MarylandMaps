@@ -55,14 +55,18 @@ def get_images():
     map_types = data['filters']['mapType']
     string_query = data['searchParameter']
     
-    # TODO need to respond with actual filtered images instead of random ones
+    filtered_files = list(df[(min_year <= df.date_filter) & (df.date_filter <= max_year) &
+                             df.Location.isin(locations) & df.type_filter.isin(map_types)]
+                          .copy()['Digital Image'])
+    
+    # TODO use string search parameter
     
     return json_response({
         'images': [
             {
-                'title': 'ba-057',  # TODO need an id to refer to the same image?
-                'src': f'/images/random?val={random.random()}'
-            } for _ in range(50)
+                'title': filename,
+                'src': f'/images/{filename}'
+            } for filename in filtered_files
         ]
     })
 
@@ -85,19 +89,17 @@ def get_test_image(title):
 
 @app.route('/details/<title>')
 def get_details_map(title):
-    # TODO return actual details of the particular image requested
-    print(df)
     obj = df[df['Digital Image'] == title]
-    print(title, obj)
-    data = {"name": str(obj['Title'].values[0]),
-            "location": str(obj['Location'].values[0]),
-            "type": str(obj['Type of Map'].values[0]),
-            "year": str(obj['Year(s)'].values[0]),
-            "call": str(obj['Call Number'].values[0]),
-            "publisher": str(obj['Publisher / Printer'].values[0]),
-            "image": {"src": "images/"+ title}
-        }
-    return json_response({})
+
+    return json_response({
+        "name": str(obj['Title'].values[0]),
+        "location": str(obj['Location'].values[0]),
+        "type": str(obj['Type of Map'].values[0]),
+        "year": str(obj['Year(s)'].values[0]),
+        "call": str(obj['Call Number'].values[0]),
+        "publisher": str(obj['Publisher / Printer'].values[0]),
+        "image": {"src": "/images/" + title}
+    })
 
 
 @app.route('/filters')

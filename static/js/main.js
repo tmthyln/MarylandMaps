@@ -187,13 +187,15 @@ app.component('image-view', {
                 <span class="close" @click="closeModal">&times;</span>
             </div>
             <div class="modal-body">
-                <div class="modal-sidebar" v-if="false">
-                    <div v-for="(value, name) in dataAttributes" class="attribute">
-                        <div class="attribute-name">{{ name }}</div>
-                        <div class="attribute-value">{{ value }}</div>
+                <div class="detailcontent">
+                    <div class="sidecolumn">
+                        <div v-for="(value, name) in infoAttributes" class="attribute">
+                            <div class="parametername">{{ name }}</div>
+                            <div class="specifics">{{ value }}</div>
+                        </div>
                     </div>
+                    <img :src="imageSource" width="520">
                 </div>
-                <iframe :src="source"></iframe>
             </div>
         </div>
     </div>`,
@@ -212,8 +214,12 @@ app.component('image-view', {
         }
     },
     computed: {
-        source() {
-            return `/details-page/${this.image}`
+        infoAttributes() {
+            return Object.fromEntries(Object.entries(this.dataAttributes)
+                .filter(([key, _]) => key !== 'image'));
+        },
+        imageSource() {
+            return this.dataAttributes.image.src;
         },
         style() {
             if (this.show) {
@@ -225,7 +231,6 @@ app.component('image-view', {
     },
     methods: {
         fetchDetails() {
-            this.show = true;
             fetch(`/details/${this.image}`)
                 .then(response => response.json())
                 .then(data => {
@@ -235,7 +240,10 @@ app.component('image-view', {
         },
         closeModal() {
             this.show = false;
-            this.$emit('update:image', '');
+            this.$nextTick(function() {
+                this.$emit('update:image', '');
+            });
+
         },
     }
 })

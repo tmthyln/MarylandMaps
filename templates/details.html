@@ -17,13 +17,6 @@
 </head>
 
 <body>
-    <div class="header">
-        <h1>Maryland Maps</h1>
-    </div>
-
-    <div class="linkbar">
-        <div id="homepage"> </div>
-    </div>
     <div class="detailcontent">
         <div class="sidecolumn">
             <div class="attribute">
@@ -57,18 +50,6 @@
 <script>
 let title_val= '{{ title }}';
 
-function createButton(){
-    d3.select("#homepage")
-      .selectAll("button")
-      .data(['Home'])
-      .join("button")
-      .text(d => d)
-      .on("click", (e, attributeName) => {
-        window.open("/");
-        fetch(urlbt);
-      });
-}
-
 fetch(`/details/${title_val}`)
   .then(response => response.json())
   .then(fetchedData => {
@@ -79,8 +60,6 @@ fetch(`/details/${title_val}`)
     let publisher_val = data.publisher;
     let type_val = data.type;
     let name_val=data.name;
-
-    createButton();
 
     document.getElementById("name").innerHTML = name_val;
     document.getElementById("location").innerHTML = location_val;
