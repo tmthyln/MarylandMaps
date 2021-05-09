@@ -1,67 +1,78 @@
-'use strict';
+const app = Vue.createApp({
+    data() {
+        return {
+            filterSelections: {
+                locations: [],
+                minYear: 0,
+                maxYear: 10000,
+                mapTypes: [],
+                searchParameter: '',
+            },
+            displaySelections: {
+                singleImage: ''
+            },
+        };
+    },
+});
 
-const filterSelections = {
-    locations: [],
-    minYear: 0,
-    maxYear: 10000,
-    mapTypes: [],
-    searchParameter: '',
-};
-
-const displaySelections = {
-    singleImage: {}
-}
-
-Vue.component('filters', {
+app.component('filters-section', {
+    props: ['title'],
     template: `
-      <sidebar class="accordion" role="tablist" v-show="filterOptions !== null">
-        <b-card no-body class="mb-1">
-          <b-card-header header-tag="header" class="p-1" role="tab">
-            <b-button block v-b-toggle.accordion-1 variant="primary">Location</b-button>
-          </b-card-header>
-          <b-collapse id="accordion-1" accordion="filter-accordion" role="tabpanel">
-            <b-card-body>
-              <div v-for="option in filterOptions.locations">
-                <input type="checkbox" :id="option" :name="option" :value="option" @change="toggleLocationSelected(option)">
-                <label :for="option">{{ option }}</label><br>
-              </div>
-            </b-card-body>
-          </b-collapse>
-        </b-card>
-        
-        <b-card no-body class="mb-1">
-          <b-card-header header-tag="header" class="p-1" role="tab">
-            <b-button block v-b-toggle.accordion-2 variant="primary">Year(s)</b-button>
-          </b-card-header>
-          <b-collapse id="accordion-2" accordion="filter-accordion" role="tabpanel">
-            <b-card-body>
-              <div class="range-slider" id="slider-range"></div>
-            </b-card-body>
-          </b-collapse>
-        </b-card>
-        
-        <b-card no-body class="mb-1">
-          <b-card-header header-tag="header" class="p-1" role="tab">
-            <b-button block v-b-toggle.accordion-3 variant="primary">Type of Map</b-button>
-          </b-card-header>
-          <b-collapse id="accordion-3" accordion="filter-accordion" role="tabpanel">
-            <b-card-body>
-              <div v-for="option in filterOptions.mapTypes">
-                <input type="checkbox" :id="option" :name="option" :value="option" @change="toggleMapTypeSelected(option)">
-                <label :for="option">{{ option }}</label><br>
-              </div>
-            </b-card-body>
-          </b-collapse>
-        </b-card>
-      </sidebar>`,
-    asyncComputed: {
-        async filterOptions() {
-            const response = await fetch('/filters');
-            const data = await response.json();
-            return data.filters;
+    <div>
+      <button class="accordion" @click="toggleVisibility">{{ title }}</button>
+      <div ref="collapsible" class="panel">
+        <slot></slot>
+      </div>
+    </div>`,
+    methods: {
+        toggleVisibility(event) {
+            event.target.classList.toggle('active');
+            if (this.$refs.collapsible.style.display === 'block') {
+                this.$refs.collapsible.style.display = 'none';
+            } else {
+                this.$refs.collapsible.style.display = 'block';
+            }
+        }
+    }
+})
+
+app.component('filters', {
+    props: ['filterSelections'],
+    emits: ['update:filterSelections'],
+    template: `
+      <div class="sidebar" v-if="fetched">
+        <filters-section title="Location">
+          <div v-for="option in filterOptions.locations">
+            <input type="checkbox" :id="option" :name="option" :value="option" @change="toggleLocationSelected(option)">
+            <label :for="option">{{ option }}</label><br>
+          </div>
+        </filters-section>
+        <filters-section title="Year">
+          <div class="range-slider" ref="sliderRange" id="slider-range"></div>
+        </filters-section>
+        <filters-section title="Type of Map">
+          <div v-for="option in filterOptions.mapTypes">
+            <input type="checkbox" :id="option" :name="option" :value="option" @change="toggleMapTypeSelected(option)">
+            <label :for="option">{{ option }}</label><br>
+          </div>
+        </filters-section>
+      </div>`,
+    data() {
+        return {
+            filterOptions: {},
+            fetched: false,
         }
     },
+    mounted() {
+        fetch('/filters')
+            .then(response => response.json())
+            .then(data => {
+                this.filterOptions = data.filters;
+                this.fetched = true;
+            });
+    },
     updated() {
+        this.$refs.sliderRange.textContent = '';
         this.createRangeSlider();
     },
     methods: {
@@ -76,8 +87,9 @@ Vue.component('filters', {
                 .default([this.filterOptions.minYear, this.filterOptions.maxYear])
                 .fill('#2196f3')
                 .on('onchange', val => {
-                    filterSelections.minYear = val[0];
-                    filterSelections.maxYear = val[1];
+                    this.filterSelections.minYear = parseInt(val[0]);
+                    this.filterSelections.maxYear = parseInt(val[1]);
+                    this.$emit('update:filterSelections', this.filterSelections);
                 });
 
             const gRange = d3
@@ -91,102 +103,141 @@ Vue.component('filters', {
             gRange.call(sliderRange);
         },
         toggleLocationSelected(location) {
-            if (filterSelections.locations.includes(location)) {
-                filterSelections.locations.splice(filterSelections.locations.indexOf(location), 1);
+            if (this.filterSelections.locations.includes(location)) {
+                this.filterSelections.locations.splice(this.filterSelections.locations.indexOf(location), 1);
             } else {
-                filterSelections.locations.push(location);
+                this.filterSelections.locations.push(location);
             }
+            this.$emit('update:filterSelections', this.filterSelections);
         },
         toggleMapTypeSelected(mapType) {
-            if (filterSelections.mapTypes.includes(mapType)) {
-                filterSelections.mapTypes.splice(filterSelections.mapTypes.indexOf(mapType), 1);
+            if (this.filterSelections.mapTypes.includes(mapType)) {
+                this.filterSelections.mapTypes.splice(this.filterSelections.mapTypes.indexOf(mapType), 1);
             } else {
-                filterSelections.mapTypes.push(mapType);
+                this.filterSelections.mapTypes.push(mapType);
             }
+            this.$emit('update:filterSelections', this.filterSelections);
         }
     }
 })
 
-Vue.component('image-grid', {
+app.component('image-grid', {
+    props: ['image-selection', 'filters'],
+    emits: ['update:image-selection'],
     template: `
     <div id="image-grid">
-        <img v-for="image in imageData"
+        <img v-for="image in images"
             class="grid-image"
-            v-bind:src="image.src"
-            height="200px"
+            :src="image.src"
+            height="200"
             @click="selectImage(image)" />
     </div>`,
-    asyncComputed: {
-        async imageData() {
-            const response = await fetch('/images', {
+    data() {
+        return {
+            images: [],
+        }
+    },
+    watch: {
+        filters: {
+            handler() {
+                this.getImageData();
+            },
+            deep: true,
+            immediate: true,
+        },
+    },
+    methods: {
+        getImageData() {
+            fetch('/images', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     filters: {
-                        location: filterSelections.locations,
-                        minYear: filterSelections.minYear,
-                        maxYear: filterSelections.maxYear,
-                        mapType: filterSelections.mapTypes,
+                        location: this.filters.locations,
+                        minYear: this.filters.minYear,
+                        maxYear: this.filters.maxYear,
+                        mapType: this.filters.mapTypes,
                     },
-                    searchParameter: filterSelections.searchParameter
+                    searchParameter: this.filters.searchParameter
                 })
-            });
-            return (await response.json()).images;
-        }
-    },
-    methods: {
+            })
+                .then(response => response.json())
+                .then(data => {
+                    this.images = data.images;
+                })
+        },
         selectImage(image) {
-            displaySelections.singleImage = image.title;
-            window.open(`/details-page/${image.title}`);
+            this.$emit('update:image-selection', image.title);
+            //window.open(`/details-page/${image.title}`);
 
         }
     }
 })
 
-Vue.component('image-view', {
+app.component('image-view', {
+    props: ['image'],
+    emits: ['update:image'],
     template: `
-    <div ref="modal" class="modal" @click="closeModalOutside">
+    <div v-if="show" ref="modal" class="modal" @click.self="closeModal" :style="style">
         <div class="modal-content">
             <div class="modal-header">
-                <span class="close" @click="closeModal">&times;</span>
                 <h2>Image Details</h2>
+                <span class="close" @click="closeModal">&times;</span>
             </div>
             <div class="modal-body">
+                <div class="modal-sidebar" v-if="false">
+                    <div v-for="(value, name) in dataAttributes" class="attribute">
+                        <div class="attribute-name">{{ name }}</div>
+                        <div class="attribute-value">{{ value }}</div>
+                    </div>
+                </div>
                 <iframe :src="source"></iframe>
             </div>
         </div>
     </div>`,
+    data() {
+        return {
+            show: false,
+            dataAttributes: {},
+        };
+    },
+    watch: {
+        image: {
+            handler() {
+                this.fetchDetails();
+            },
+            deep: true,
+        }
+    },
     computed: {
-        imageSelected() {
-            return displaySelections.singleImage === {};
-        },
         source() {
-            return `/details-page/${displaySelections.singleImage.title}`
+            return `/details-page/${this.image}`
+        },
+        style() {
+            if (this.show) {
+                return 'display:block';
+            } else {
+                return 'display:none';
+            }
         }
     },
     methods: {
-        openModal() {
-            this.$refs.modal.style.display = 'block';
+        fetchDetails() {
+            this.show = true;
+            fetch(`/details/${this.image}`)
+                .then(response => response.json())
+                .then(data => {
+                    this.dataAttributes = data;
+                    this.show = true;
+                })
         },
         closeModal() {
-            this.$refs.modal.style.display = 'none';
+            this.show = false;
+            this.$emit('update:image', '');
         },
-        closeModalOutside(event) {
-            if (event.target === this.$refs.modal) {
-                this.closeModal();
-            }
-        }
     }
 })
 
-new Vue({
-    el: '#app',
-    data: function () {
-        return {
-            filterSelections: filterSelections,
-            displaySelections: displaySelections,
-        };
-    },
-});
+const vm = app.mount('#app');

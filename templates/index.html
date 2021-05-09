@@ -11,39 +11,36 @@
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="https://unpkg.com/d3-simple-slider"></script>
 
-    <link
-            rel="stylesheet"
-            href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-            integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
-            crossorigin="anonymous"
-    />
-    <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css" />
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
 
-    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
-    <script src="https://unpkg.com/vue-async-computed@3.9.0"></script>
-    <script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8" crossorigin="anonymous"></script>
+    <!--script src="https://unpkg.com/vue-async-computed@3.9.0"></script-->
 
     <link rel="stylesheet" href="/static/css/main.css"/>
     <link rel="stylesheet" href="/static/css/imagegrid.css"/>
     <link rel="stylesheet" href="/static/css/modals.css"/>
 </head>
 <body>
-<div class="container" id="app">
-    <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
-        <h1>Maryland Maps</h1>
-        <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
-    </nav>
-    <div class="main">
-        <filters></filters>
-        <image-grid></image-grid>
-        <image-view></image-view>
+    <div class="container" id="app">
+        <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
+            <h1>Maryland Maps</h1>
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </nav>
+        <div class="main">
+            <filters v-model:filter-selections="filterSelections"></filters>
+            <image-grid v-model:image-selection="displaySelections.singleImage"
+                        :filters="filterSelections"></image-grid>
+            <image-view v-model:image="displaySelections.singleImage"></image-view>
+        </div>
     </div>
-</div>
 
-<script type="module" src="/static/js/main.js"></script>
+    <script src="/static/js/main.js"></script>
 
 </body>
 </html>

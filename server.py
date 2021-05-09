@@ -42,13 +42,7 @@ def main_page():
 
 @app.route('/details-page/<title>')
 def go_to_detail_page(title):
-    return flask.render_template('details.html', title=1234)
-
-
-@app.route('/homepage')
-def go_to_homepage():
-    print("called homepage")
-    return flask.render_template('details.html', title="ba-057")
+    return flask.render_template('details.html', title=title)
 
 
 @app.route('/images', methods=['GET', 'POST'])
@@ -92,9 +86,9 @@ def get_test_image(title):
 @app.route('/details/<title>')
 def get_details_map(title):
     # TODO return actual details of the particular image requested
-    
+    print(df)
     obj = df[df['Digital Image'] == title]
-    print(title)
+    print(title, obj)
     data = {"name": str(obj['Title'].values[0]),
             "location": str(obj['Location'].values[0]),
             "type": str(obj['Type of Map'].values[0]),
