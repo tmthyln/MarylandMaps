@@ -40,11 +40,6 @@ def main_page():
     return flask.render_template('index.html')
 
 
-@app.route('/details-page/<title>')
-def go_to_detail_page(title):
-    return flask.render_template('details.html', title=title)
-
-
 @app.route('/images', methods=['GET', 'POST'])
 def get_images():
     data = flask.request.json if flask.request.method == 'POST' else {}
@@ -81,9 +76,12 @@ def get_test_image(title):
         filepath = f'data-scraper/{random.choice(files)}'
         
     resp = flask.send_file(filepath, mimetype='image/jpeg')
-    resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-    resp.headers['Pragma'] = 'no-cache'
-    resp.headers['Expires'] = 0
+    
+    if title == 'random':
+        resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        resp.headers['Pragma'] = 'no-cache'
+        resp.headers['Expires'] = 0
+    
     return resp
 
 

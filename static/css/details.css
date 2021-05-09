@@ -21,14 +21,14 @@ h1 {
 
 /* details css */
 .detailcontent {
-    margin-left: 0ex;
-    padding: 0;
+    margin-left: 0;
+    padding: 10px;
     background-color:white;
 }
 
 .sidecolumn {
     float: left;
-    width: 100px;
+    width: 250px;
     background-color:white;
     left: 0;
     overflow-x: hidden;
@@ -37,7 +37,7 @@ h1 {
 .maincolumn {
     /* float: left; */
     position: fixed;
-    margin-left: 100px;
+    margin-left: 350px;
     background-color: white;
 }
 
@@ -50,6 +50,7 @@ h1 {
     font-size: small;
     color: black;
     background-color: white;
+    margin-bottom: 10px;
 }
 
 .parametername{
@@ -58,6 +59,6 @@ h1 {
     background-color: white;
 }
 
-.linkbar{
-    height: 2em;
+.detailcontent img {
+
 }
