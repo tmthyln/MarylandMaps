@@ -221,7 +221,7 @@ app.component('image-view', {
                             <div class="specifics">{{ value }}</div>
                         </div>
                     </div>
-                    <img :src="imageSource" width="520">
+                    <img :src="imageSource">
                 </div>
             </div>
         </div>

@@ -23,12 +23,10 @@
 </head>
 <body>
     <div class="container" id="app">
-        <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
-            <h1>Maryland Maps</h1>
-            <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search">
-            </form>
-        </nav>
+        <ul class="navbar">
+            <li><h1>Maryland Maps</h1></li>
+            <li><input type="search" placeholder="Search"></li>
+        </ul>
         <div class="main">
             <filters v-model:filter-selections="filterSelections"></filters>
             <image-grid v-model:image-selection="displaySelections.singleImage"

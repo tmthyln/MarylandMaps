@@ -68,6 +68,8 @@ def get_images():
 
 @app.route('/images/<title>')
 def get_test_image(title):
+    max_height = flask.request.args.get('maxHeight', None)
+    
     files = list(filter(lambda f: f.endswith('.jpg'), os.listdir('data-scraper')))
     
     if title in files:

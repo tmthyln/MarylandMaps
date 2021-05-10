@@ -1,6 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&display=swap');
 
 :root {
+    --dominant-color: #0b2545;
+    --light-dominant-color: #13315c;
+    --lighter-dominant-color: #134074;
+    --bold-accent-color: #f0a202;
+    --italic-accent-color: #e1efe6;
+
+    --text-color: #121212;
+    --light-text-color: #fefefe;
+
     --sidebar-width: 375px;
 }
 
@@ -26,6 +35,27 @@ h1 {
 .main {
     margin-left: var(--sidebar-width);
     padding: 0;
+}
+
+/* navigation */
+nav {
+    background-color: var(--dominant-color);
+}
+
+.navbar {
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    list-style-type: none;
+    margin: 0;
+    padding: 12px;
+    z-index: 20;
+    background-color: var(--dominant-color);
+    color: var(--light-text-color);
+}
+.navbar li {
+    display: inline;
 }
 
 /* sidebar and subcomponents */
@@ -59,8 +89,8 @@ label {
 
 /* Style the buttons that are used to open and close the accordion panel */
 .accordion {
-    background-color: #eee;
-    color: #444;
+    background-color: var(--light-dominant-color);
+    color: var(--light-text-color);
     cursor: pointer;
     padding: 18px;
     width: 100%;
@@ -73,7 +103,7 @@ label {
 
 /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
 .active, .accordion:hover {
-    background-color: #ccc;
+    background-color: var(--lighter-dominant-color);
 }
 
 /* Style the accordion panel. Note: hidden by default */
@@ -82,4 +112,5 @@ label {
     background-color: white;
     display: none;
     overflow: hidden;
+    margin-bottom: 12px;
 }
