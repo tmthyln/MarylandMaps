@@ -60,22 +60,30 @@ def get_images():
         'images': [
             {
                 'title': filename,
-                'src': f'/images/{filename}'
+                'src': f'/images/small/{filename}'
             } for filename in filtered_files
         ]
     })
 
+# I don't want to touch the frontend so I am doing a semi-dumb redirection in here
+@app.route('/images/full/<title>')
+def get_full_image(title):
+    return get_test_image("full/" + title)
 
-@app.route('/images/<title>')
+
+@app.route('/images/small/<title>')
+def get_small_image(title):
+    return get_test_image("small/" + title)
+
 def get_test_image(title):
     max_height = flask.request.args.get('maxHeight', None)
     
-    files = list(filter(lambda f: f.endswith('.jpg'), os.listdir('data-scraper')))
+    files = list(filter(lambda f: f.endswith('.jpg'), os.listdir('data-scraper/small/')))
     
-    if title in files:
+    if title[title.index('/')+1:] in files:
         filepath = f'data-scraper/{title}'
     elif title == 'random':
-        filepath = f'data-scraper/{random.choice(files)}'
+        filepath = f'data-scraper/full/{random.choice(files)}'
         
     resp = flask.send_file(filepath, mimetype='image/jpeg')
     
@@ -98,7 +106,7 @@ def get_details_map(title):
         "year": str(obj['Year(s)'].values[0]),
         "call": str(obj['Call Number'].values[0]),
         "publisher": str(obj['Publisher / Printer'].values[0]),
-        "image": {"src": "/images/" + title}
+        "image": {"src": "/images/full/" + title}
     })
 
 
