@@ -5,7 +5,7 @@ Visualize the Maryland Maps from UMD Libraries.
 # Instructions:
 
 ### Installation
-Install conda environment with python=3.7.9
+Install Python3.7, (assuming your default interpreter is 3.7) run:
 ```
 pip install -r requirements.txt
 ```

@@ -1,0 +1,8 @@
+manual changes:
+
+added lat long for locations based on their location tags. (maps might show different lat-long)
+filled missing location tags for some maps
+G3709 .32.C6P5 1780 .D47 map was duplicate, removed it from the database
+
+should we add categories for map types ourselves? or label them as uncategorized?
+having a clean year attribute with approximate dates~?
