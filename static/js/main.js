@@ -36,25 +36,40 @@ app.component('filters-section', {
     }
 })
 
+app.component('checkbox', {
+    emits: ['change'],
+    template: `
+    <label class="checkbox-container">
+      <slot></slot>
+      <input type="checkbox" @change="toggleCheckbox" checked>
+      <span class="checkmark"></span>
+    </label>`,
+    methods: {
+        toggleCheckbox(event) {
+            this.$emit('change', event.target.checked);
+        }
+    }
+})
+
 app.component('filters', {
     props: ['filterSelections'],
     emits: ['update:filterSelections'],
     template: `
       <div class="sidebar" v-if="fetched">
         <filters-section title="Location">
-          <div v-for="option in filterOptions.locations">
-            <input type="checkbox" :id="option" :name="option" :value="option" @change="toggleLocationSelected(option)">
-            <label :for="option">{{ option }}</label><br>
-          </div>
+          <checkbox v-for="option in filterOptions.locations" 
+                  @change="toggleLocationSelected(option)">
+            {{ option }}
+          </checkbox>
         </filters-section>
         <filters-section title="Year">
           <div class="range-slider" ref="sliderRange" id="slider-range"></div>
         </filters-section>
         <filters-section title="Type of Map">
-          <div v-for="option in filterOptions.mapTypes">
-            <input type="checkbox" :id="option" :name="option" :value="option" @change="toggleMapTypeSelected(option)">
-            <label :for="option">{{ option }}</label><br>
-          </div>
+          <checkbox v-for="option in filterOptions.mapTypes" 
+                  @change="toggleMapTypeSelected(option)">
+            {{ option }}
+          </checkbox>
         </filters-section>
       </div>`,
     data() {
@@ -68,6 +83,16 @@ app.component('filters', {
             .then(response => response.json())
             .then(data => {
                 this.filterOptions = data.filters;
+
+                this.filterSelections.locations.splice(0, this.filterSelections.locations.length);
+                this.filterSelections.mapTypes.splice(0, this.filterSelections.mapTypes.length);
+                this.filterOptions.locations.forEach(location => {
+                    this.filterSelections.locations.push(location);
+                })
+                this.filterOptions.mapTypes.forEach(type => {
+                    this.filterSelections.mapTypes.push(type);
+                })
+
                 this.fetched = true;
             });
     },
@@ -79,6 +104,7 @@ app.component('filters', {
         createRangeSlider() {
             const sliderRange = d3
                 .sliderBottom()
+                .width(250)
                 .min(this.filterOptions.minYear)
                 .max(this.filterOptions.maxYear)
                 .tickFormat(String)
@@ -127,6 +153,7 @@ app.component('image-grid', {
     template: `
     <div id="image-grid">
         <img v-for="image in images"
+            :key="image.title"
             class="grid-image"
             :src="image.src"
             height="200"
@@ -194,7 +221,7 @@ app.component('image-view', {
                             <div class="specifics">{{ value }}</div>
                         </div>
                     </div>
-                    <img :src="imageSource" width="520">
+                    <img :src="imageSource">
                 </div>
             </div>
         </div>
