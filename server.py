@@ -49,12 +49,14 @@ def get_images():
     max_year = data['filters']['maxYear']
     map_types = data['filters']['mapType']
     string_query = data['searchParameter']
-    
     filtered_files = (df[(min_year <= df.date_filter) & (df.date_filter <= max_year) &
                          df.location_filter.isin(locations) & df.type_filter.isin(map_types)]
-                      .copy()[['Digital Image', 'Title']])
+                      .copy())
+    if len(string_query) > 0:
+        for string in string_query.strip().split():
+            filtered_files = filtered_files[df['search_string'].str.contains(string.lower())]
     # TODO use string search parameter
-    
+    filtered_files = filtered_files[['Digital Image', 'Title']]
     return json_response({
         'images': [
             {
