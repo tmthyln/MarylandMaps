@@ -40,9 +40,9 @@ def main_page():
     return flask.render_template('index.html')
 
 
-@app.route('/images', methods=['GET', 'POST'])
+@app.route('/images', methods=['POST'])
 def get_images():
-    data = flask.request.json if flask.request.method == 'POST' else {}
+    data = flask.request.json
     
     locations = data['filters']['location']
     min_year = data['filters']['minYear']
@@ -50,22 +50,22 @@ def get_images():
     map_types = data['filters']['mapType']
     string_query = data['searchParameter']
     
-    filtered_files = list(df[(min_year <= df.date_filter) & (df.date_filter <= max_year) &
-                             df.location_filter.isin(locations) & df.type_filter.isin(map_types)]
-                          .copy()['Digital Image'])
-    
+    filtered_files = (df[(min_year <= df.date_filter) & (df.date_filter <= max_year) &
+                         df.location_filter.isin(locations) & df.type_filter.isin(map_types)]
+                      .copy()[['Digital Image', 'Title']])
     # TODO use string search parameter
     
     return json_response({
         'images': [
             {
-                'title': filename,
-                'src': f'/images/small/{filename}'
-            } for filename in filtered_files
+                'title': title,
+                'filename': filename,
+                'src': f'/images/small/{filename}',
+            } for filename, title in filtered_files.to_records(index=False)
         ]
     })
 
-# I don't want to touch the frontend so I am doing a semi-dumb redirection in here
+
 @app.route('/images/full/<title>')
 def get_full_image(title):
     return get_test_image("full/" + title)
@@ -75,14 +75,15 @@ def get_full_image(title):
 def get_small_image(title):
     return get_test_image("small/" + title)
 
+
 def get_test_image(title):
-    max_height = flask.request.args.get('maxHeight', None)
-    
     files = list(filter(lambda f: f.endswith('.jpg'), os.listdir('data-scraper/small/')))
     
     if title[title.index('/')+1:] in files:
         filepath = f'data-scraper/{title}'
     elif title == 'random':
+        filepath = f'data-scraper/full/{random.choice(files)}'
+    else:
         filepath = f'data-scraper/full/{random.choice(files)}'
         
     resp = flask.send_file(filepath, mimetype='image/jpeg')

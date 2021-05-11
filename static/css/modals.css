@@ -14,7 +14,7 @@
 
 /* Modal Header */
 .modal-header {
-    padding: 12px;
+    padding: 6px;
     background-color: var(--light-dominant-color);
     color: var(--light-text-color);
 }
@@ -61,7 +61,7 @@
 
 .close:hover,
 .close:focus {
-    color: black;
+    color: var(--bold-accent-color);
     text-decoration: none;
     cursor: pointer;
 }

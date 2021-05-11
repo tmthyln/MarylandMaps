@@ -23,10 +23,7 @@
 </head>
 <body>
     <div class="container" id="app">
-        <ul class="navbar">
-            <li><h1>Maryland Maps</h1></li>
-            <li><input type="search" placeholder="Search"></li>
-        </ul>
+        <navbar v-model:query="filterSelections.searchParameter"></navbar>
         <div class="main">
             <filters v-model:filter-selections="filterSelections"></filters>
             <image-grid v-model:image-selection="displaySelections.singleImage"
@@ -36,6 +33,5 @@
     </div>
 
     <script src="/static/js/main.js"></script>
-
 </body>
 </html>

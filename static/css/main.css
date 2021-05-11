@@ -114,3 +114,10 @@ label {
     overflow: hidden;
     margin-bottom: 12px;
 }
+
+.panel a {
+    color: var(--lighter-dominant-color);
+    font-size: large;
+    margin-right: 1em;
+    cursor: pointer;
+}

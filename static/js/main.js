@@ -1,3 +1,14 @@
+/* Utilities */
+function titleCase(str) {
+    return str.replace(
+        /\w\S*/g,
+        function (txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        }
+    );
+}
+
+/* Frontend Vue components & app */
 const app = Vue.createApp({
     data() {
         return {
@@ -15,13 +26,38 @@ const app = Vue.createApp({
     },
 });
 
+app.component('navbar', {
+    props: ['query'],
+    emits: ['update:query'],
+    template: `
+    <ul class="navbar">
+        <li><h1>Maryland Maps</h1></li>
+        <li><input type="search" placeholder="Search" @change="updateQuery"></li>
+    </ul>`,
+    methods: {
+        updateQuery(event) {
+            this.$emit('update:query', event.target.value);
+        }
+    }
+})
+
 app.component('filters-section', {
-    props: ['title'],
+    props: {
+        title: String,
+        name: String,
+        resetable: Boolean,
+        clearable: Boolean
+    },
+    emits: ['reset', 'clear'],
     template: `
     <div>
       <button class="accordion" @click="toggleVisibility">{{ title }}</button>
       <div ref="collapsible" class="panel">
         <slot></slot>
+        <div>
+            <a class="section-link" v-show="resetable" @click="$emit('reset', name)">Reset</a>
+            <a class="section-link" v-show="clearable" @click="$emit('clear', name)">Clear</a>
+        </div>
       </div>
     </div>`,
     methods: {
@@ -37,11 +73,14 @@ app.component('filters-section', {
 })
 
 app.component('checkbox', {
+    props: {
+        checked: Boolean,
+    },
     emits: ['change'],
     template: `
     <label class="checkbox-container">
       <slot></slot>
-      <input type="checkbox" @change="toggleCheckbox" checked>
+      <input type="checkbox" @change="toggleCheckbox" :checked="checked">
       <span class="checkmark"></span>
     </label>`,
     methods: {
@@ -56,18 +95,23 @@ app.component('filters', {
     emits: ['update:filterSelections'],
     template: `
       <div class="sidebar" v-if="fetched">
-        <filters-section title="Location">
-          <checkbox v-for="option in filterOptions.locations" 
-                  @change="toggleLocationSelected(option)">
+        <filters-section title="Location" resetable clearable
+                @reset="setLocations($event, true)" @clear="setLocations($event, false)">
+          <checkbox v-for="option in filterOptions.locations"
+                @change="toggleLocationSelected(option)"
+                :checked="filterSelections.locations.includes(option)">
             {{ option }}
           </checkbox>
         </filters-section>
-        <filters-section title="Year">
+        <filters-section title="Year"
+                @reset="$nextTick(createRangeSlider)">
           <div class="range-slider" ref="sliderRange" id="slider-range"></div>
         </filters-section>
-        <filters-section title="Type of Map">
+        <filters-section title="Type of Map" resetable clearable
+                @reset="setMapTypes(true)" @clear="setMapTypes(false)">
           <checkbox v-for="option in filterOptions.mapTypes" 
-                  @change="toggleMapTypeSelected(option)">
+                  @change="toggleMapTypeSelected(option)"
+                  :checked="filterSelections.mapTypes.includes(option)">
             {{ option }}
           </checkbox>
         </filters-section>
@@ -85,23 +129,26 @@ app.component('filters', {
                 this.filterOptions = data.filters;
 
                 this.filterSelections.locations.splice(0, this.filterSelections.locations.length);
-                this.filterSelections.mapTypes.splice(0, this.filterSelections.mapTypes.length);
                 this.filterOptions.locations.forEach(location => {
                     this.filterSelections.locations.push(location);
-                })
+                });
+
+                this.filterSelections.mapTypes.splice(0, this.filterSelections.mapTypes.length);
                 this.filterOptions.mapTypes.forEach(type => {
                     this.filterSelections.mapTypes.push(type);
                 })
 
+                this.$emit('update:filterSelections', this.filterSelections);
                 this.fetched = true;
             });
     },
     updated() {
-        this.$refs.sliderRange.textContent = '';
         this.createRangeSlider();
     },
     methods: {
         createRangeSlider() {
+            this.$refs.sliderRange.textContent = '';
+
             const sliderRange = d3
                 .sliderBottom()
                 .width(250)
@@ -110,7 +157,9 @@ app.component('filters', {
                 .tickFormat(String)
                 .ticks(this.filterOptions.years)
                 .step(1)
-                .default([this.filterOptions.minYear, this.filterOptions.maxYear])
+                .default([
+                    this.filterOptions.minYear,
+                    this.filterOptions.maxYear])
                 .fill('#2196f3')
                 .on('onchange', val => {
                     this.filterSelections.minYear = parseInt(val[0]);
@@ -127,6 +176,8 @@ app.component('filters', {
                 .attr('transform', 'translate(30,30)');
 
             gRange.call(sliderRange);
+
+            this.$emit('update:filterSelections', this.filterSelections);
         },
         toggleLocationSelected(location) {
             if (this.filterSelections.locations.includes(location)) {
@@ -143,6 +194,26 @@ app.component('filters', {
                 this.filterSelections.mapTypes.push(mapType);
             }
             this.$emit('update:filterSelections', this.filterSelections);
+        },
+        setLocations(event, addAll) {
+            this.filterSelections.locations.splice(0, this.filterSelections.locations.length);
+            if (addAll) {
+                this.filterOptions.locations.forEach(location => {
+                    this.filterSelections.locations.push(location);
+                })
+            }
+
+            this.$emit('update:filterSelections', this.filterSelections);
+        },
+        setMapTypes(addAll) {
+            this.filterSelections.mapTypes.splice(0, this.filterSelections.mapTypes.length);
+            if (addAll) {
+                this.filterOptions.mapTypes.forEach(type => {
+                    this.filterSelections.mapTypes.push(type);
+                })
+            }
+
+            this.$emit('update:filterSelections', this.filterSelections);
         }
     }
 })
@@ -152,12 +223,13 @@ app.component('image-grid', {
     emits: ['update:image-selection'],
     template: `
     <div id="image-grid">
-        <img v-for="image in images"
-            :key="image.title"
-            class="grid-image"
-            :src="image.src"
-            height="200"
-            @click="selectImage(image)" />
+        <figure v-for="image in images"
+                :key="image.filename"
+                class="grid-item"
+                @click="selectImage(image)">
+            <img class="grid-image" :src="image.src" height="200" />
+            <figcaption class="image-description" :style="imageTextStyle(image)">{{ image.title }}</figcaption>
+        </figure>
     </div>`,
     data() {
         return {
@@ -195,10 +267,11 @@ app.component('image-grid', {
                     this.images = data.images;
                 })
         },
-        selectImage(image) {
-            this.$emit('update:image-selection', image.title);
-            //window.open(`/details-page/${image.title}`);
+        imageTextStyle(image) {
 
+        },
+        selectImage(image) {
+            this.$emit('update:image-selection', image.filename);
         }
     }
 })
@@ -210,14 +283,14 @@ app.component('image-view', {
     <div v-if="show" ref="modal" class="modal" @click.self="closeModal" :style="style">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Image Details</h2>
+                <h2>{{ dataAttributes.name }}</h2>
                 <span class="close" @click="closeModal">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="detailcontent">
                     <div class="sidecolumn">
                         <div v-for="(value, name) in infoAttributes" class="attribute">
-                            <div class="parametername">{{ name }}</div>
+                            <div class="parametername">{{ titleCase(name) }}</div>
                             <div class="specifics">{{ value }}</div>
                         </div>
                     </div>
@@ -267,10 +340,18 @@ app.component('image-view', {
         },
         closeModal() {
             this.show = false;
-            this.$nextTick(function() {
+            this.$nextTick(function () {
                 this.$emit('update:image', '');
             });
 
+        },
+        titleCase(str) {
+            return str.replace(
+                /\w\S*/g,
+                function (txt) {
+                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                }
+            );
         },
     }
 })
