@@ -6,6 +6,9 @@
 }
 
 .sidecolumn {
+    position: sticky;
+    top: 0;
+    left: 0;
     float: left;
     width: 250px;
     background-color:white;
@@ -17,7 +20,7 @@
     float: right;
     position: fixed;
     width: 100%;
-    margin-left: 350px;
+    margin-left: 375px;
     right: 0;
     background-color: white;
 }
@@ -27,14 +30,14 @@
 }
 
 .specifics {
-    font-size: small;
+    font-size: medium;
     color: black;
     background-color: white;
     margin-bottom: 10px;
 }
 
 .parametername{
-    font-size: medium;
+    font-size: large;
     color: var(--bold-accent-color);
     background-color: white;
 }

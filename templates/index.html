@@ -27,8 +27,10 @@
         <div class="main">
             <filters v-model:filter-selections="filterSelections"></filters>
             <image-grid v-model:image-selection="displaySelections.singleImage"
+                        v-model:comparison-images="displaySelections.compareImages"
                         :filters="filterSelections"></image-grid>
             <image-view v-model:image="displaySelections.singleImage"></image-view>
+            <overlay-view v-model:images="displaySelections.compareImages"></overlay-view>
         </div>
     </div>
 

@@ -20,7 +20,8 @@ const app = Vue.createApp({
                 searchParameter: '',
             },
             displaySelections: {
-                singleImage: ''
+                singleImage: '',
+                compareImages: [],
             },
         };
     },
@@ -219,16 +220,17 @@ app.component('filters', {
 })
 
 app.component('image-grid', {
-    props: ['image-selection', 'filters'],
-    emits: ['update:image-selection'],
+    props: ['image-selection', 'comparison-images', 'filters'],
+    emits: ['update:image-selection', 'update:comparison-images'],
     template: `
     <div id="image-grid">
         <figure v-for="image in images"
                 :key="image.filename"
                 class="grid-item"
-                @click="selectImage(image)">
+                @click.exact="selectImage(image)"
+                @click.ctrl.exact="selectComparisonImage(image)">
             <img class="grid-image" :src="image.src" height="200" />
-            <figcaption class="image-description" :style="imageTextStyle(image)">{{ image.title }}</figcaption>
+            <figcaption class="image-description">{{ image.title }}</figcaption>
         </figure>
     </div>`,
     data() {
@@ -267,8 +269,9 @@ app.component('image-grid', {
                     this.images = data.images;
                 })
         },
-        imageTextStyle(image) {
-
+        selectComparisonImage(image) {
+            this.comparisonImages.push(image.filename);
+            this.$emit('update:comparison-images', this.comparisonImages);
         },
         selectImage(image) {
             this.$emit('update:image-selection', image.filename);
@@ -307,8 +310,9 @@ app.component('image-view', {
     },
     watch: {
         image: {
-            handler() {
-                this.fetchDetails();
+            handler(newImage) {
+                if (newImage !== '')
+                    this.fetchDetails();
             },
             deep: true,
         }
@@ -336,7 +340,7 @@ app.component('image-view', {
                 .then(data => {
                     this.dataAttributes = data;
                     this.show = true;
-                })
+                });
         },
         closeModal() {
             this.show = false;
@@ -354,6 +358,57 @@ app.component('image-view', {
             );
         },
     }
+})
+
+app.component('overlay-view', {
+    props: ['images'],
+    emits: ['update:images'],
+    template: `
+    <div v-if="show" ref="modal" class="modal" @click.self="closeModal" :style="style">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Image Comparison Overlay View</h2>
+                <span class="close" @click="closeModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p v-for="image in images">{{ image }}</p>
+            </div>
+        </div>
+    </div>`,
+    data() {
+        return {
+            show: false,
+        };
+    },
+    watch: {
+        images: {
+            handler(newImages) {
+                console.log(newImages)
+                if (newImages.length === 2) {
+                    this.show = true;
+                }
+            },
+            deep: true,
+        },
+    },
+    computed: {
+        style() {
+            if (this.show) {
+                return 'display:block';
+            } else {
+                return 'display:none';
+            }
+        }
+    },
+    methods: {
+        closeModal() {
+            this.show = false;
+            this.$nextTick(function () {
+                this.$emit('update:images', []);
+            });
+
+        },
+    },
 })
 
 const vm = app.mount('#app');
