@@ -159,8 +159,8 @@ app.component('filters', {
                 .ticks(this.filterOptions.years)
                 .step(1)
                 .default([
-                    this.filterOptions.minYear,
-                    this.filterOptions.maxYear])
+                    Math.max(this.filterOptions.minYear, this.filterSelections.minYear),
+                    Math.min(this.filterOptions.maxYear, this.filterSelections.maxYear)])
                 .fill('#2196f3')
                 .on('onchange', val => {
                     this.filterSelections.minYear = parseInt(val[0]);
