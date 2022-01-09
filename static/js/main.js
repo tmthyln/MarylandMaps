@@ -105,7 +105,7 @@ app.component('filters', {
           </checkbox>
         </filters-section>
         <filters-section title="Year"
-                @reset="$nextTick(createRangeSlider)">
+                @reset="resetYears">
           <div class="range-slider" ref="sliderRange" id="slider-range"></div>
         </filters-section>
         <filters-section title="Type of Map" resetable clearable
@@ -215,6 +215,12 @@ app.component('filters', {
             }
 
             this.$emit('update:filterSelections', this.filterSelections);
+        },
+        resetYears() {
+            this.filterSelections.minYear = this.filterOptions.minYear;
+            this.filterSelections.maxYear = this.filterOptions.maxYear;
+            this.$emit('update:filterSelections', this.filterSelections);
+            this.$nextTick(this.createRangeSlider);
         }
     }
 })
